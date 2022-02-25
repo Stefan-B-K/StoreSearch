@@ -2,6 +2,11 @@
 import UIKit
 
 class SearchViewController: UIViewController {
+  
+  enum Identifiers {
+    static let searchResultCell = "SearchResultCell"
+    static let noResultCell = "NoResultCell"
+  }
 
   @IBOutlet weak var searchBar: UISearchBar!
   @IBOutlet weak var tableView: UITableView!
@@ -13,16 +18,31 @@ class SearchViewController: UIViewController {
     super.viewDidLoad()
     
     tableView.contentInset = UIEdgeInsets(top: 51, left: 0, bottom: 0, right: 0)      // съдържанието (не целия tableView) да не е покрит от SearchBar-a ( h = 51 )
+    searchBarTextFieldColors()
     
     let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
     gestureRecognizer.cancelsTouchesInView = false
     tableView.addGestureRecognizer(gestureRecognizer)
+    
+    var cellNib = UINib(nibName: Identifiers.searchResultCell, bundle: nil)
+    tableView.register(cellNib, forCellReuseIdentifier: Identifiers.searchResultCell)
+    cellNib = UINib(nibName: Identifiers.noResultCell, bundle: nil)
+    tableView.register(cellNib, forCellReuseIdentifier: Identifiers.noResultCell)
   }
   
 
   // MARK: - Helper Functions
   @objc func hideKeyboard() {
     searchBar.resignFirstResponder()
+  }
+  
+  func searchBarTextFieldColors() {
+    searchBar.searchTextField.backgroundColor = UIColor(named: "SearchBarShade")
+    searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: searchBar.searchTextField.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor(named: "ArtistName")!])
+    if let leftView = searchBar.searchTextField.leftView as? UIImageView {
+      leftView.image = leftView.image?.withRenderingMode(.alwaysTemplate)
+      leftView.tintColor = UIColor(named: "ArtistName")
+    }
   }
   
 }
@@ -45,6 +65,12 @@ extension SearchViewController: UISearchBarDelegate {
     tableView.reloadData()
   }
   
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    if searchText == "" && searchResults.isEmpty {
+      tableView.reloadData()
+    }
+  }
+  
   func position(for bar: UIBarPositioning) -> UIBarPosition {       // UIBarPositioningDelegate method
     .topAttached
   }
@@ -60,22 +86,21 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cellIdentifier = "SearchResultCell"
-    var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
-    if cell == nil {
-      cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
-    }
-    var content = cell?.defaultContentConfiguration()
-    if searchResults.isEmpty {
-      content?.text = "(Nothng found)"
-      content?.secondaryText = ""
+    if !searchResults.isEmpty {
+      let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.searchResultCell, for: indexPath) as! SearchResultCell
+      cell.nameLabel.text = !searchResults.isEmpty ? searchResults[indexPath.row].name : "(Nothng found)"
+      cell.artistNameLabel.text = !searchResults.isEmpty ? searchResults[indexPath.row].artist : ""
+    
+      return cell
     } else {
-      let searchResult = searchResults[indexPath.row]
-      content?.text = searchResult.name
-      content?.secondaryText = searchResult.artist
+      tableView.separatorStyle = .none
+      if searchBar.text == "" {
+        return UITableViewCell()
+      } else {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.noResultCell, for: indexPath)
+        return cell
+      }
     }
-    cell?.contentConfiguration = content
-    return cell
   }
   
   func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
