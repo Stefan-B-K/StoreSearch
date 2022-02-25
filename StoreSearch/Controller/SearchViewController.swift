@@ -16,6 +16,7 @@ class SearchViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    searchBar.becomeFirstResponder()
     
     tableView.contentInset = UIEdgeInsets(top: 51, left: 0, bottom: 0, right: 0)      // съдържанието (не целия tableView) да не е покрит от SearchBar-a ( h = 51 )
     searchBarTextFieldColors()
@@ -45,6 +46,13 @@ class SearchViewController: UIViewController {
     }
   }
   
+  func searchBarClearButtonColor() {
+    if let clearButton = searchBar.searchTextField.value(forKey: "_clearButton") as? UIButton {
+      clearButton.imageView?.image = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+      clearButton.imageView!.tintColor = UIColor(named: "ArtistName")
+    }
+  }
+  
 }
 
 
@@ -66,6 +74,7 @@ extension SearchViewController: UISearchBarDelegate {
   }
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    searchBarClearButtonColor()
     if searchText == "" && searchResults.isEmpty {
       tableView.reloadData()
     }
@@ -108,7 +117,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    tableView.deselectRow(at: indexPath, animated: true)
+
   }
   
 }
