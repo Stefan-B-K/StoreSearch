@@ -15,6 +15,7 @@ class SearchViewController: UIViewController {
   var searchResults = [SearchResult]()
   var hasSearched = false
   var isLoading = false
+  var dataTask: URLSessionDataTask?
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -66,15 +67,6 @@ class SearchViewController: UIViewController {
     return URL(string: urlString)!
   }
   
-  func performStoreRequest(with url: URL) -> Data? {
-    do {
-      return try Data(contentsOf: url)
-    } catch {
-      showNetworkError()
-      return nil
-    }
-  }
-  
   func parse(data: Data) -> [SearchResult] {
     do {
       return try JSONDecoder().decode(ResultArray.self, from: data).results
@@ -100,25 +92,40 @@ extension SearchViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
     if !searchBar.text!.isEmpty {
       searchBar.resignFirstResponder()
+      dataTask?.cancel()
       isLoading = true
       tableView.reloadData()
       searchResults.removeAll()
       hasSearched = true
       
-      let url = self.iTunesURL(searchText: searchBar.text!)
-      DispatchQueue.global().async {
-        if let data = self.performStoreRequest(with: url) {
+      let url = iTunesURL(searchText: searchBar.text!)
+      let session = URLSession.shared
+      dataTask = session.dataTask(with: url) { data, response, error in
+        if let error = error as NSError? {
+          if error.code == -999 {                                 // Search was cancelled
+            return
+          } else {
+            print("Failure! \(error.localizedDescription)")
+          }
+        } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data {
           self.searchResults = self.parse(data: data)
-          self.searchResults.sort(by: <)                                 // func < overridden in GLOBALS
+          self.searchResults.sort(by: <)
           DispatchQueue.main.async {
             self.isLoading = false
             self.tableView.reloadData()
           }
           return
+        } else {
+          print("Failure! \(response!)")
         }
-        
+        DispatchQueue.main.async {
+          self.hasSearched = false
+          self.isLoading = false
+          self.tableView.reloadData()
+          self.showNetworkError()
+        }
       }
-      
+      dataTask?.resume()
     }
   }
   
