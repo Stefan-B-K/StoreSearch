@@ -15,8 +15,12 @@ class DetailViewController: UIViewController {
   var searchResult: SearchResult!
   private var downloadImageTask: URLSessionDownloadTask?
   
+  required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    transitioningDelegate = self
+  }
+  
   deinit {
-    print("deinit \(self)")
     downloadImageTask?.cancel()
     downloadImageTask = nil
   }
@@ -69,5 +73,16 @@ class DetailViewController: UIViewController {
 extension DetailViewController: UIGestureRecognizerDelegate {
   func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
     return (touch.view is GradientView)
+  }
+}
+
+
+extension DetailViewController: UIViewControllerTransitioningDelegate {
+  func animationController(
+    forPresented presented: UIViewController,
+    presenting: UIViewController,
+    source: UIViewController
+  ) -> UIViewControllerAnimatedTransitioning? {
+    return BounceAnimationController()
   }
 }
