@@ -6,9 +6,9 @@ class SearchManager {
   var searchResults = [SearchResult]()
   var hasSearched = false
   var isLoading = false
-  weak var presentResultIn: SearchViewController?
-  var fetchTask: URLSessionDataTask?
   var downloadedImages = [URL: UIImage]()
+  weak var presentResultIn: SearchViewController?
+  private var fetchTask: URLSessionDataTask?
   
   static let shared: SearchManager = {
     return SearchManager()

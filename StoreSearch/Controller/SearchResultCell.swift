@@ -7,8 +7,8 @@ class SearchResultCell: UITableViewCell {
   @IBOutlet weak var artistNameLabel: UILabel!
   @IBOutlet weak var artworkImageView: UIImageView!
   
-  private var downloadTask: URLSessionDownloadTask?
-  let searchManager = SearchManager.shared
+  private var downloadImageTask: URLSessionDownloadTask?
+  private let searchManager = SearchManager.shared
   
   override func awakeFromNib() {
     super.awakeFromNib()
@@ -25,8 +25,8 @@ class SearchResultCell: UITableViewCell {
   
   override func prepareForReuse() {
     super.prepareForReuse()
-    downloadTask?.cancel()
-    downloadTask = nil
+    downloadImageTask?.cancel()
+    downloadImageTask = nil
   }
   
   // MARK: - Helper Methods
@@ -39,7 +39,7 @@ class SearchResultCell: UITableViewCell {
       if let loadedImage = searchManager.downloadedImages[smallURL] {
         artworkImageView.image = loadedImage
       } else {
-        downloadTask = artworkImageView.loadImage(url: smallURL)
+        downloadImageTask = artworkImageView.loadImage(url: smallURL)
       }
     }
   }

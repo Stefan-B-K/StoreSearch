@@ -13,6 +13,14 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var priceButton: UIButton!
   
   var searchResult: SearchResult!
+  private var downloadImageTask: URLSessionDownloadTask?
+  
+  deinit {
+    print("deinit \(self)")
+    downloadImageTask?.cancel()
+    downloadImageTask = nil
+  }
+  
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -47,6 +55,9 @@ class DetailViewController: UIViewController {
       if let _ = URL(string: searchResult.storeURL) {
         priceButton.isEnabled = true
       }
+    if let largeURL = URL(string: searchResult.imageLarge) {
+      downloadImageTask = artworkImageView.loadImage(url: largeURL)
+    }
   }
   
 }

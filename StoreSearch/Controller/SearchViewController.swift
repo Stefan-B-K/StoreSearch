@@ -14,7 +14,7 @@ class SearchViewController: UIViewController {
   @IBOutlet weak var tableView: UITableView!
   @IBOutlet weak var segmentedControl: UISegmentedControl!
   
-  let searchManager = SearchManager.shared
+  private let searchManager = SearchManager.shared
   
   override func viewDidLoad() {
     super.viewDidLoad()
