@@ -33,7 +33,7 @@ class SearchResult: Decodable {
   
   var price: Double { trackPrice ?? collectionPrice ?? itemPrice ?? 0.0 }
   
-  var storeURL: String { trackViewUrl ?? collectionViewUrl ?? "( not available )" }
+  var storeURL: String { trackViewUrl ?? collectionViewUrl ?? "" }
   
   var genre: String {
     if let genres = bookGenre {

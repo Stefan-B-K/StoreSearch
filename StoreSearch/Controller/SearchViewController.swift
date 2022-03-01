@@ -129,5 +129,14 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     tableView.deselectRow(at: indexPath, animated: true)
     performSegue(withIdentifier: Identifiers.detailSegue, sender: indexPath)
   }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == Identifiers.detailSegue {
+      let indexPath = sender as! IndexPath
+      let searchResult = searchManager.searchResults[indexPath.row]
+      let popUp = segue.destination as! DetailViewController
+      popUp.searchResult = searchResult
+    }
+  }
 
 }

@@ -12,6 +12,8 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var genreLabel: UILabel!
   @IBOutlet weak var priceButton: UIButton!
   
+  var searchResult: SearchResult!
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -22,10 +24,29 @@ class DetailViewController: UIViewController {
     gestureRecognizer.delegate = self
     view.addGestureRecognizer(gestureRecognizer)
     
+    updateUI()
   }
   
   @IBAction func close() {
     dismiss(animated: true)
+  }
+  
+  @IBAction func openInStore() {
+    if let url = URL(string: searchResult.storeURL) {
+      UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+  }
+
+  
+  func updateUI() {
+      nameLabel.text = searchResult.name
+      artistNameLabel.text = !searchResult.artist.isEmpty ? searchResult.artist : "Unknown"
+      kindLabel.text = searchResult.type
+      genreLabel.text = searchResult.genre
+      priceButton.setTitle(searchResult.price.showAsPrice(currency: searchResult.currency), for: .normal)
+      if let _ = URL(string: searchResult.storeURL) {
+        priceButton.isEnabled = true
+      }
   }
   
 }

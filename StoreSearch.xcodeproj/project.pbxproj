@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		980FB7D627CE692400DF3BFD /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980FB7D527CE692400DF3BFD /* Double.swift */; };
 		981C367427C7EFC000C6A45C /* SearchResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 981C367327C7EFC000C6A45C /* SearchResultCell.xib */; };
 		9837331927CA02F700D761F2 /* GLOBALS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9837331827CA02F700D761F2 /* GLOBALS.swift */; };
 		9869C56027CCF0A90055C0B1 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9869C55E27CCF0A90055C0B1 /* LoadingCell.xib */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		980FB7D527CE692400DF3BFD /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		981C367327C7EFC000C6A45C /* SearchResultCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchResultCell.xib; sourceTree = "<group>"; };
 		9837331827CA02F700D761F2 /* GLOBALS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLOBALS.swift; sourceTree = "<group>"; };
 		9869C55E27CCF0A90055C0B1 /* LoadingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingCell.xib; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				98F078AB27CD4847006B729A /* UIImageView.swift */,
+				980FB7D527CE692400DF3BFD /* Double.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 				98B014AC27C7983F00EBD9AA /* SceneDelegate.swift in Sources */,
 				988EF59427C8025A000E2FC3 /* SearchResultCell.swift in Sources */,
 				98F078AC27CD4847006B729A /* UIImageView.swift in Sources */,
+				980FB7D627CE692400DF3BFD /* Double.swift in Sources */,
 				98F078AF27CD569A006B729A /* SearchManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
