@@ -33,6 +33,10 @@ class DetailViewController: UIViewController {
     view.addGestureRecognizer(gestureRecognizer)
     
     updateUI()
+    
+    view.backgroundColor = UIColor.clear
+    let dimmingView = GradientView(frame: view.bounds)
+    view.insertSubview(dimmingView, at: 0)
   }
   
   @IBAction func close() {
@@ -64,6 +68,6 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController: UIGestureRecognizerDelegate {
   func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-    return (touch.view === self.view)
+    return (touch.view is GradientView)
   }
 }
