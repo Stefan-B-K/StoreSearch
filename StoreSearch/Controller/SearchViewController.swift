@@ -7,6 +7,7 @@ class SearchViewController: UIViewController {
     static let searchResultCell = "SearchResultCell"
     static let noResultCell = "NoResultCell"
     static let loadingCell = "LoadingCell"
+    static let detailSegue = "ShowDetail"
   }
   
   @IBOutlet weak var searchBar: UISearchBar!
@@ -124,5 +125,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     return searchManager.searchResults.isEmpty || searchManager.isLoading ? nil : indexPath
   }
   
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: true)
+    performSegue(withIdentifier: Identifiers.detailSegue, sender: indexPath)
+  }
 
 }
