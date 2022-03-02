@@ -15,6 +15,12 @@ class DetailViewController: UIViewController {
   var searchResult: SearchResult!
   private var downloadImageTask: URLSessionDownloadTask?
   
+  enum AnimationStyle {
+    case slide, fade
+  }
+  var dismissStyle = AnimationStyle.fade
+
+  
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
     transitioningDelegate = self
@@ -44,6 +50,7 @@ class DetailViewController: UIViewController {
   }
   
   @IBAction func close() {
+    dismissStyle = .slide
     dismiss(animated: true)
   }
   
@@ -71,6 +78,7 @@ class DetailViewController: UIViewController {
 }
 
 extension DetailViewController: UIGestureRecognizerDelegate {
+  
   func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
     return (touch.view is GradientView)
   }
@@ -78,11 +86,20 @@ extension DetailViewController: UIGestureRecognizerDelegate {
 
 
 extension DetailViewController: UIViewControllerTransitioningDelegate {
-  func animationController(
-    forPresented presented: UIViewController,
-    presenting: UIViewController,
-    source: UIViewController
-  ) -> UIViewControllerAnimatedTransitioning? {
+  
+  func animationController(forPresented presented: UIViewController, presenting: UIViewController,
+                           source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     return BounceAnimationController()
   }
+  
+  func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    switch dismissStyle {
+    case .slide:
+      return SlideOutAnimationController()
+    case .fade:
+      return FadeOutAnimationController()
+    }
+    
+  }
+
 }
