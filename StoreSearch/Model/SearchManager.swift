@@ -1,13 +1,17 @@
 
 import UIKit
 
+protocol SearchManagerDelegate: UIViewController {
+  func reloadUI()
+}
+
 class SearchManager {
   
   var searchResults = [SearchResult]()
   var hasSearched = false
   var isLoading = false
   var downloadedImages = [URL: UIImage]()
-  weak var presentResultIn: SearchViewController?
+  var delegate: SearchManagerDelegate?
   private var fetchTask: URLSessionDataTask?
   
   static let shared: SearchManager = {
@@ -44,47 +48,46 @@ class SearchManager {
     let alert = UIAlertController(title: "Whoops...", message: "Error accessing iTunes Store", preferredStyle: .alert)
     let action = UIAlertAction(title: "OK", style: .default, handler: nil)
     alert.addAction(action)
-    presentResultIn?.present(alert, animated: true, completion: nil)
+    delegate?.present(alert, animated: true, completion: nil)
   }
   
-    func performSearch(for searchText: String) {
-        presentResultIn?.searchBar.resignFirstResponder()
-        fetchTask?.cancel()
-        isLoading = true
-        presentResultIn?.tableView.reloadData()
-        searchResults.removeAll()
-        hasSearched = true
-  
-      let url = iTunesURL(searchText: searchText, category: presentResultIn!.segmentedControl.selectedSegmentIndex)
-        let session = URLSession.shared
-        fetchTask = session.dataTask(with: url) { data, response, error in
-          if let error = error as NSError? {
-            if error.code == -999 {                                 // Search was cancelled
-              return
-            } else {
-              print("Failure! \(error.localizedDescription)")
-            }
-          } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data {
-            self.searchResults = self.parse(data: data)
-            self.searchResults.sort(by: <)
-            DispatchQueue.main.async {
-              self.isLoading = false
-              self.presentResultIn?.tableView.reloadData()
-            }
-            return
-          } else {
-            print("Failure! \(response!)")
-          }
-          DispatchQueue.main.async {
-            self.hasSearched = false
-            self.isLoading = false
-            self.presentResultIn?.tableView.reloadData()
-            self.showNetworkError()
-          }
+  func performSearch(for searchText: String, category: Int) {
+    fetchTask?.cancel()
+    isLoading = true
+    delegate?.reloadUI()
+    searchResults.removeAll()
+    hasSearched = true
+    
+    let url = iTunesURL(searchText: searchText, category: category)
+    let session = URLSession.shared
+    fetchTask = session.dataTask(with: url) { data, response, error in
+      if let error = error as NSError? {
+        if error.code == -999 {                                 // Search was cancelled
+          return
+        } else {
+          print("Failure! \(error.localizedDescription)")
         }
-        fetchTask?.resume()
+      } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data {
+        self.searchResults = self.parse(data: data)
+        self.searchResults.sort(by: <)
+        DispatchQueue.main.async {
+          self.isLoading = false
+          self.delegate?.reloadUI()
+        }
+        return
+      } else {
+        print("Failure! \(response!)")
+      }
+      DispatchQueue.main.async {
+        self.hasSearched = false
+        self.isLoading = false
+        self.delegate?.reloadUI()
+        self.showNetworkError()
+      }
     }
-
+    fetchTask?.resume()
+  }
+  
 }
 
 

@@ -15,11 +15,11 @@ class DetailViewController: UIViewController {
   var searchResult: SearchResult!
   private var downloadImageTask: URLSessionDownloadTask?
   
-  enum AnimationStyle {
+  private enum AnimationStyle {
     case slide, fade
   }
-  var dismissStyle = AnimationStyle.fade
-
+  private var dismissStyle = AnimationStyle.fade
+  
   
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
@@ -59,17 +59,17 @@ class DetailViewController: UIViewController {
       UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
   }
-
   
-  func updateUI() {
-      nameLabel.text = searchResult.name
-      artistNameLabel.text = !searchResult.artist.isEmpty ? searchResult.artist : "Unknown"
-      kindLabel.text = searchResult.type
-      genreLabel.text = searchResult.genre
-      priceButton.setTitle(searchResult.price.showAsPrice(currency: searchResult.currency), for: .normal)
-      if let _ = URL(string: searchResult.storeURL) {
-        priceButton.isEnabled = true
-      }
+  
+  private func updateUI() {
+    nameLabel.text = searchResult.name
+    artistNameLabel.text = !searchResult.artist.isEmpty ? searchResult.artist : "Unknown"
+    kindLabel.text = searchResult.type
+    genreLabel.text = searchResult.genre
+    priceButton.setTitle(searchResult.price.showAsPrice(currency: searchResult.currency), for: .normal)
+    if let _ = URL(string: searchResult.storeURL) {
+      priceButton.isEnabled = true
+    }
     if let largeURL = URL(string: searchResult.imageLarge) {
       downloadImageTask = artworkImageView.loadImage(url: largeURL)
     }
@@ -101,5 +101,5 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
     }
     
   }
-
+  
 }

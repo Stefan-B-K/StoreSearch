@@ -1,7 +1,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, SearchManagerDelegate {
   
   enum Identifiers {
     static let searchResultCell = "SearchResultCell"
@@ -15,13 +15,13 @@ class SearchViewController: UIViewController {
   @IBOutlet weak var segmentedControl: UISegmentedControl!
   
   private let searchManager = SearchManager.shared
-  var landscapeVC: LandscapeViewController?
+  private var landscapeVC: LandscapeViewController?
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    searchManager.presentResultIn = self
-    searchBar.becomeFirstResponder()
     
+    searchManager.delegate = self
+    searchBar.becomeFirstResponder()
     tableView.contentInset = UIEdgeInsets(top: 91, left: 0, bottom: 0, right: 0)
     searchBarTextFieldColors()
     
@@ -36,6 +36,11 @@ class SearchViewController: UIViewController {
     cellNib = UINib(nibName: Identifiers.loadingCell, bundle: nil)
     tableView.register(cellNib, forCellReuseIdentifier: Identifiers.loadingCell)
     
+    if UITraitCollection.current.verticalSizeClass == .compact {
+      hideKeyboard()
+      showLandscape()
+      return
+    }
   }
   
   override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -43,19 +48,26 @@ class SearchViewController: UIViewController {
     
     switch newCollection.verticalSizeClass {
     case .compact:
+      hideKeyboard()
       showLandscape(with: coordinator)
     case .regular, .unspecified:
       hideLandscape(with: coordinator)
     @unknown default:
       break
     }
-
+    
   }
   
   @IBAction func segmentChanged(_ sender: UISegmentedControl) {
     if !searchBar.text!.isEmpty {
-      searchManager.performSearch(for: searchBar.text!)
+      hideKeyboard()
+      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex)
     }
+  }
+  
+  // MARK: - SearchManagerDelegate Methods
+  func reloadUI() {
+    tableView.reloadData()
   }
   
   // MARK: - Helper Methods
@@ -63,7 +75,7 @@ class SearchViewController: UIViewController {
     searchBar.resignFirstResponder()
   }
   
-  func searchBarTextFieldColors() {
+  private func searchBarTextFieldColors() {
     searchBar.searchTextField.backgroundColor = UIColor(named: "SearchBarShade")
     searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: searchBar.searchTextField.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor(named: "ArtistName")!])
     if let leftView = searchBar.searchTextField.leftView as? UIImageView {
@@ -72,52 +84,63 @@ class SearchViewController: UIViewController {
     }
   }
   
-  func searchBarClearButtonColor() {
+  private func searchBarClearButtonColor() {
     if let clearButton = searchBar.searchTextField.value(forKey: "_clearButton") as? UIButton {
       clearButton.imageView?.image = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
       clearButton.imageView!.tintColor = UIColor(named: "ArtistName")
     }
   }
   
-  func showLandscape(with coordinator: UIViewControllerTransitionCoordinator) {
+  // MARK: - Landscape Methods
+  private func showLandscape(with coordinator: UIViewControllerTransitionCoordinator? = nil) {      // = nil for initial load in landscape (no animation)
     guard landscapeVC == nil else { return }
     landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
     if let controller = landscapeVC {
+      controller.searchResults = searchManager.searchResults          // before the call to   controller.view --> viewDidLoad()
       controller.view.frame = view.bounds
-      controller.view .alpha = 0              //  animation START state
+      controller.view.alpha = coordinator == nil ? 1 : 0              //  animation START state 0
       view.addSubview(controller.view)
       addChild(controller)
-      coordinator.animate(
-        alongsideTransition: { _ in
-          controller.view.alpha = 1           //  animation END state
-          self.searchBar.resignFirstResponder()
-          if self.presentedViewController != nil {
-            self.dismiss(animated: true, completion: nil)
-          }
-        },
-        completion: { _ in
-          controller.didMove(toParent: self)
-        })
+      if let coordinator = coordinator {
+        coordinator.animate(
+          alongsideTransition: { _ in
+            controller.view.alpha = 1                                 //  animation END state
+            self.hideKeyboard()
+            if self.presentedViewController != nil {
+              self.dismiss(animated: true, completion: nil)
+            }
+          },
+          completion: { _ in
+            controller.didMove(toParent: self)
+          })
+      } else {
+        controller.didMove(toParent: self)
+      }
     }
   }
-
-  func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator) {
+  
+  private func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator? = nil) {
     if let controller = landscapeVC {
       controller.willMove(toParent: nil)
-      coordinator.animate(
-        alongsideTransition: { _ in
-          controller.view.alpha = 0           //  animation END state
-          self.searchBar.becomeFirstResponder()
-        },
-        completion: { _ in
-          controller.view.removeFromSuperview()
-          controller.removeFromParent()
-          self.landscapeVC = nil
-        })
+      if let coordinator = coordinator {
+        coordinator.animate(
+          alongsideTransition: { _ in
+            controller.view.alpha = 0                                 //  animation END state
+          },
+          completion: { _ in
+            controller.view.removeFromSuperview()
+            controller.removeFromParent()
+            self.landscapeVC = nil
+          })
+      } else {
+        controller.view.removeFromSuperview()
+        controller.removeFromParent()
+        self.landscapeVC = nil
+      }
     }
   }
-
-
+  
+  
 }
 
 
@@ -126,14 +149,15 @@ extension SearchViewController: UISearchBarDelegate {
   
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
     if !searchBar.text!.isEmpty {
-      searchManager.performSearch(for: searchBar.text!)
+      hideKeyboard()
+      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex)
     }
   }
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     searchBarClearButtonColor()
     if searchText == "" && searchManager.searchResults.isEmpty {
-      tableView.reloadData()
+      reloadUI()
     }
   }
   
@@ -191,5 +215,5 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
       popUp.searchResult = searchResult
     }
   }
-
+  
 }

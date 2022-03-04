@@ -12,11 +12,11 @@ class SearchResult: Decodable {
   private var artistName: String?
   private var trackName: String?; private var collectionName: String?
   private var trackPrice: Double?; var collectionPrice: Double?; private var itemPrice: Double?
+  private var trackViewUrl: String?;  private var collectionViewUrl: String?
+  private var itemGenre: String?; private var bookGenre: [String]?
   var currency = ""
   var imageSmall = ""
   var imageLarge = ""
-  private var trackViewUrl: String?;  private var collectionViewUrl: String?
-  private var itemGenre: String?; private var bookGenre: [String]?
   
   enum CodingKeys: String, CodingKey {
     case kind, artistName, currency, trackName, collectionName
@@ -30,10 +30,9 @@ class SearchResult: Decodable {
   }
   
   var name: String { trackName ?? collectionName ?? "( no name )" }
-  
   var price: Double { trackPrice ?? collectionPrice ?? itemPrice ?? 0.0 }
-  
   var storeURL: String { trackViewUrl ?? collectionViewUrl ?? "" }
+  var artist: String { artistName ?? "" }
   
   var genre: String {
     if let genres = bookGenre {
@@ -42,8 +41,6 @@ class SearchResult: Decodable {
       return itemGenre ?? "( not specified )"
     }
   }
-  
-  var artist: String { artistName ?? "" }
   
   var type: String {
     let kind = self.kind ?? "audiobook"

@@ -38,7 +38,7 @@
                                 <rect key="frame" x="0.0" y="51" width="667" height="32"/>
                                 <items>
                                     <barButtonItem style="plain" id="3HO-lc-GKS">
-                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="CCB-ne-meX">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="CCB-ne-meX">
                                             <rect key="frame" x="20" y="0.0" width="627" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
@@ -235,24 +235,36 @@
                         <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We are in landscape mode now." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FMb-VR-4v0">
-                                <rect key="frame" x="213.5" y="177" width="240" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f2o-FY-hCA">
+                                <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="52a-FN-jRA"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="jGo-yd-tl6"/>
+                                <connections>
+                                    <outlet property="delegate" destination="UD9-8i-THc" id="JVD-cJ-7is"/>
+                                </connections>
+                            </scrollView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="AYu-Ka-wuw">
+                                <rect key="frame" x="275" y="325" width="116" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" name="ArtistName"/>
+                                <color key="currentPageIndicatorTintColor" name="SearchBar"/>
+                                <connections>
+                                    <action selector="pageChanged:" destination="UD9-8i-THc" eventType="valueChanged" id="Ssv-qc-d1V"/>
+                                </connections>
+                            </pageControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="E8O-wc-u9K"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="FMb-VR-4v0" firstAttribute="centerX" secondItem="1XS-rB-hSv" secondAttribute="centerX" id="HpI-zW-qSp"/>
-                            <constraint firstItem="FMb-VR-4v0" firstAttribute="centerY" secondItem="1XS-rB-hSv" secondAttribute="centerY" id="v7a-u7-fzc"/>
-                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="pageControl" destination="AYu-Ka-wuw" id="fNn-hA-qsR"/>
+                        <outlet property="scrollView" destination="f2o-FY-hCA" id="CUd-JW-fTA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9MF-Hp-5wH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1527" y="116"/>
+            <point key="canvasLocation" x="1526.9865067466269" y="116"/>
         </scene>
     </scenes>
     <color key="tintColor" name="AccentColor"/>
