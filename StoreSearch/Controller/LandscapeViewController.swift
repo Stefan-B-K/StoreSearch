@@ -7,7 +7,7 @@ class LandscapeViewController: UIViewController {
   @IBOutlet weak var scrollView: UIScrollView!
   @IBOutlet weak var pageControl: UIPageControl!
   
-  var searchResults = [SearchResult]()
+  private let searchManager = SearchManager.shared
   private var firstTime = true
   private var downloads = [URLSessionDownloadTask]()
   
@@ -41,10 +41,10 @@ class LandscapeViewController: UIViewController {
       height: pageControl.frame.size.height)
     if firstTime {
       firstTime = false
-      if searchResults.isEmpty {
+      if searchManager.searchResults.isEmpty {
         scrollView.contentSize = CGSize(width: scrollView.bounds.size.width, height: scrollView.bounds.size.height)
       } else {
-        tileButtons(searchResults)
+        tileButtons(searchManager.searchResults)
       }
     }
   }

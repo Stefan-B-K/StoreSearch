@@ -1,7 +1,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController, SearchManagerDelegate {
+class SearchViewController: UIViewController {
   
   enum Identifiers {
     static let searchResultCell = "SearchResultCell"
@@ -20,9 +20,8 @@ class SearchViewController: UIViewController, SearchManagerDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    searchManager.delegate = self
     searchBar.becomeFirstResponder()
-    tableView.contentInset = UIEdgeInsets(top: 91, left: 0, bottom: 0, right: 0)
+    tableView.contentInset = UIEdgeInsets(top: 110, left: 0, bottom: 0, right: 0)
     searchBarTextFieldColors()
     
     let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -55,24 +54,28 @@ class SearchViewController: UIViewController, SearchManagerDelegate {
     @unknown default:
       break
     }
-    
   }
   
   @IBAction func segmentChanged(_ sender: UISegmentedControl) {
-    if !searchBar.text!.isEmpty {
-      hideKeyboard()
-      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex)
-    }
-  }
-  
-  // MARK: - SearchManagerDelegate Methods
-  func reloadUI() {
-    tableView.reloadData()
+    performSearch()
   }
   
   // MARK: - Helper Methods
   @objc func hideKeyboard() {
     searchBar.resignFirstResponder()
+  }
+  
+  func performSearch() {
+    if !searchBar.text!.isEmpty {
+      hideKeyboard()
+      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex) { success in
+        if !success {
+          self.showNetworkError()
+        }
+        self.tableView.reloadData()
+      }
+      tableView.reloadData()
+    }
   }
   
   private func searchBarTextFieldColors() {
@@ -91,12 +94,18 @@ class SearchViewController: UIViewController, SearchManagerDelegate {
     }
   }
   
+  private func showNetworkError() {
+    let alert = UIAlertController(title: "Whoops...", message: "Error accessing iTunes Store", preferredStyle: .alert)
+    let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
+  }
+  
   // MARK: - Landscape Methods
   private func showLandscape(with coordinator: UIViewControllerTransitionCoordinator? = nil) {      // = nil for initial load in landscape (no animation)
     guard landscapeVC == nil else { return }
     landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
     if let controller = landscapeVC {
-      controller.searchResults = searchManager.searchResults          // before the call to   controller.view --> viewDidLoad()
       controller.view.frame = view.bounds
       controller.view.alpha = coordinator == nil ? 1 : 0              //  animation START state 0
       view.addSubview(controller.view)
@@ -148,16 +157,13 @@ class SearchViewController: UIViewController, SearchManagerDelegate {
 extension SearchViewController: UISearchBarDelegate {
   
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    if !searchBar.text!.isEmpty {
-      hideKeyboard()
-      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex)
-    }
+    performSearch()
   }
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     searchBarClearButtonColor()
     if searchText == "" && searchManager.searchResults.isEmpty {
-      reloadUI()
+      tableView.reloadData()
     }
   }
   
@@ -177,13 +183,14 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
     if searchManager.isLoading {
+      tableView.separatorStyle = .none
       let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.loadingCell, for: indexPath)
       let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
       spinner.startAnimating()
       return cell
     } else if !searchManager.searchResults.isEmpty {
       let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.searchResultCell, for: indexPath) as! SearchResultCell
-      cell.nameLabel.text = !searchManager.searchResults.isEmpty ? searchManager.searchResults[indexPath.row].name : "(Nothng found)"
+      cell.nameLabel.text = searchManager.searchResults[indexPath.row].name
       let searchResult = searchManager.searchResults[indexPath.row]
       cell.configure(for: searchResult)
       return cell
