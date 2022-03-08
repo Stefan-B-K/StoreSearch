@@ -3,12 +3,27 @@ import UIKit
 
 class SearchManager {
   
-  var searchResults = [SearchResult]()
-  var hasSearched = false
-  var isLoading = false
-  var downloadedImages = [URL: UIImage]()
+  enum Category: Int {
+    case all, music, software, ebooks
+    
+    var kind: String {
+      switch self {
+      case .all: return ""
+      case .music: return "musicTrack"
+      case .software: return "software"
+      case .ebooks: return "ebook"
+      }
+    }
+  }
+  
+  enum State {
+    case noSearchOrError, loading, noResults, results([SearchResult])
+  }
+
+  private(set) var state: State = .noSearchOrError
   private var fetchTask: URLSessionDataTask?
-  typealias SearchComplete = (Bool) -> Void
+  var downloadedImages = [URL: UIImage]()
+  typealias SearchComplete = (Bool, String?) -> Void
 
   static let shared: SearchManager = {
     return SearchManager()
@@ -18,16 +33,9 @@ class SearchManager {
   
   
   // MARK: - HTTP data from API
-  private func iTunesURL(searchText: String, category: Int) -> URL {
-    let kind: String
-    switch category {
-    case 1: kind = "musicTrack"
-    case 2: kind = "software"
-    case 3: kind = "ebook"
-    default: kind = ""
-    }
+  private func iTunesURL(searchText: String, category: Category) -> URL {
     let encodedString = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-    let urlString = "https://itunes.apple.com/search?term=\(encodedString!)&limit=200&entity=\(kind)"
+    let urlString = "https://itunes.apple.com/search?term=\(encodedString!)&limit=200&entity=\(category.kind)"
     return URL(string: urlString)!
   }
   
@@ -42,40 +50,52 @@ class SearchManager {
   
 
   
-  func performSearch(for searchText: String, category: Int, completion: @escaping SearchComplete) {
+  func performSearch(for searchText: String, category: Category, completion: @escaping SearchComplete) {
     fetchTask?.cancel()
-    isLoading = true
-//    delegate?.reloadUI()
-    searchResults.removeAll()
-    hasSearched = true
+    state = .loading
     
     let url = iTunesURL(searchText: searchText, category: category)
-    let session = URLSession.shared
+    let session: URLSession = {
+      let configuration = URLSessionConfiguration.default
+      configuration.timeoutIntervalForResource = 10
+      configuration.timeoutIntervalForRequest = 10
+      return URLSession(configuration: configuration)
+    }()
     fetchTask = session.dataTask(with: url) { data, response, error in
+      var newState = State.noSearchOrError
       var success = false
+      var failMessage: String? = nil
       if let error = error as NSError? {
         if error.code == -999 {                                 // Search was cancelled
           return
         } else {
-          print("Failure! \(error.localizedDescription)")
+          failMessage = "Error connecting to iTunes Store: \(error.localizedDescription)"
         }
       } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data {
-        self.searchResults = self.parse(data: data)
-        self.searchResults.sort(by: <)
-        self.isLoading = false
+        var searchResults = self.parse(data: data)
+        if searchResults.isEmpty {
+          newState = .noResults
+        } else {
+          searchResults.sort(by: <)
+          newState = .results(searchResults)
+        }
         success = true
       } else {
-        print("Failure! \(response!)")
-      }
-      if !success {
-        self.hasSearched = false
-        self.isLoading = false
+        if let httpResponse = response as? HTTPURLResponse {
+          failMessage = "Response from iTunes Store server: \(httpResponse.statusCode)"
+        }
       }
       DispatchQueue.main.async {
-        completion(success)
+        self.state = newState
+        completion(success, failMessage)
       }
     }
     fetchTask?.resume()
+  }
+  
+  func cancelSearch() {
+    fetchTask?.cancel()
+    state = .noSearchOrError
   }
   
 }

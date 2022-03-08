@@ -74,12 +74,12 @@
                         <outlet property="searchBar" destination="eAs-PT-yiu" id="coY-4F-DrL"/>
                         <outlet property="segmentedControl" destination="CCB-ne-meX" id="XBp-IS-RTG"/>
                         <outlet property="tableView" destination="rFv-nd-vDt" id="U8F-AN-mBM"/>
-                        <segue destination="wO5-uD-HT8" kind="presentation" identifier="ShowDetail" modalPresentationStyle="pageSheet" id="eFz-sd-7vZ"/>
+                        <segue destination="wO5-uD-HT8" kind="presentation" identifier="ShowDetail" id="eFz-sd-7vZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="132" y="116"/>
+            <point key="canvasLocation" x="132" y="-148"/>
         </scene>
         <!--Detail-->
         <scene sceneID="a75-cf-TC0">
@@ -90,16 +90,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18c-g1-ikE" userLabel="Pop-up View">
-                                <rect key="frame" x="193.5" y="47.5" width="280" height="280"/>
+                                <rect key="frame" x="150" y="47.5" width="367" height="280"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="oeB-5y-OdR" userLabel="V Stack">
-                                        <rect key="frame" x="16" y="16" width="248" height="248"/>
+                                        <rect key="frame" x="16" y="16" width="335" height="248"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="3BC-5f-MYx">
-                                                <rect key="frame" x="0.0" y="0.0" width="248" height="100"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="335" height="100"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bgN-98-oQo">
-                                                        <rect key="frame" x="74" y="0.0" width="100" height="100"/>
+                                                        <rect key="frame" x="117.5" y="0.0" width="100" height="100"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="100" id="6Jl-aD-u7z"/>
                                                             <constraint firstAttribute="width" constant="100" id="OoV-SD-TaW"/>
@@ -108,19 +108,19 @@
                                                 </subviews>
                                             </stackView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="17" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nFD-II-hop">
-                                                <rect key="frame" x="0.0" y="116" width="248" height="17"/>
+                                                <rect key="frame" x="0.0" y="116" width="335" height="17"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="eKq-YJ-dTK" userLabel="Artist Name">
-                                                <rect key="frame" x="0.0" y="149.5" width="248" height="14.5"/>
+                                                <rect key="frame" x="0.0" y="149.5" width="335" height="14.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="fqP-Ph-ior" userLabel="H Stack">
-                                                <rect key="frame" x="0.0" y="180" width="248" height="35"/>
+                                                <rect key="frame" x="0.0" y="180" width="335" height="35"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="7H5-Hf-zlW" userLabel="V Stack">
                                                         <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
@@ -140,16 +140,16 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="A0g-5I-sMb" userLabel="V Stack">
-                                                        <rect key="frame" x="43" y="0.0" width="205" height="35"/>
+                                                        <rect key="frame" x="43" y="0.0" width="292" height="35"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kind Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vjg-GK-9Lp">
-                                                                <rect key="frame" x="0.0" y="0.0" width="205" height="13.5"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="292" height="13.5"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genre Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DT0-Q3-pZz" userLabel="Genre Value">
-                                                                <rect key="frame" x="0.0" y="21.5" width="205" height="13.5"/>
+                                                                <rect key="frame" x="0.0" y="21.5" width="292" height="13.5"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
@@ -159,10 +159,10 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="bottom" translatesAutoresizingMaskIntoConstraints="NO" id="NJD-N2-MaD">
-                                                <rect key="frame" x="0.0" y="231" width="248" height="17"/>
+                                                <rect key="frame" x="0.0" y="231" width="335" height="17"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cHf-bD-0xK">
-                                                        <rect key="frame" x="192" y="0.0" width="56" height="17"/>
+                                                        <rect key="frame" x="279" y="0.0" width="56" height="17"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                         <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="8" maxY="0.0"/>
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -179,7 +179,7 @@
                                         </constraints>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F3q-C7-Hu2" userLabel="Close Button">
-                                        <rect key="frame" x="232" y="8" width="40" height="31"/>
+                                        <rect key="frame" x="319" y="8" width="40" height="31"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain">
                                             <imageReference key="image" image="xmark.circle.fill" catalog="system" symbolScale="default"/>
@@ -207,12 +207,19 @@
                         <constraints>
                             <constraint firstItem="18c-g1-ikE" firstAttribute="centerY" secondItem="R0s-rt-Q3O" secondAttribute="centerY" id="0am-9E-KNk"/>
                             <constraint firstItem="dCx-Yt-Oyw" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="18c-g1-ikE" secondAttribute="bottom" constant="16" id="E4n-0c-nki"/>
-                            <constraint firstItem="dCx-Yt-Oyw" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="18c-g1-ikE" secondAttribute="trailing" constant="16" id="Og8-Qp-U85"/>
+                            <constraint firstItem="dCx-Yt-Oyw" firstAttribute="trailing" secondItem="18c-g1-ikE" secondAttribute="trailing" constant="32" id="Og8-Qp-U85">
+                                <variation key="heightClass=compact-widthClass=compact" constant="150"/>
+                                <variation key="heightClass=compact-widthClass=regular" constant="230"/>
+                            </constraint>
                             <constraint firstItem="18c-g1-ikE" firstAttribute="top" relation="greaterThanOrEqual" secondItem="dCx-Yt-Oyw" secondAttribute="top" constant="16" id="bjo-vk-HqR"/>
-                            <constraint firstItem="18c-g1-ikE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dCx-Yt-Oyw" secondAttribute="leading" constant="16" id="hfw-1o-8gp"/>
+                            <constraint firstItem="18c-g1-ikE" firstAttribute="leading" secondItem="dCx-Yt-Oyw" secondAttribute="leading" constant="32" id="hfw-1o-8gp">
+                                <variation key="heightClass=compact-widthClass=compact" constant="150"/>
+                                <variation key="heightClass=compact-widthClass=regular" constant="230"/>
+                            </constraint>
                             <constraint firstItem="18c-g1-ikE" firstAttribute="centerX" secondItem="R0s-rt-Q3O" secondAttribute="centerX" id="q6U-B5-taM"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="6Zm-4B-YrW"/>
                     <connections>
                         <outlet property="artistNameLabel" destination="eKq-YJ-dTK" id="xlT-9i-7v4"/>
                         <outlet property="artworkImageView" destination="bgN-98-oQo" id="ErW-to-brl"/>
@@ -225,7 +232,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7wO-It-0nu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="814" y="116"/>
+            <point key="canvasLocation" x="881" y="180"/>
         </scene>
         <!--Landscape-->
         <scene sceneID="qYH-yS-Fwg">
@@ -260,13 +267,17 @@
                     <connections>
                         <outlet property="pageControl" destination="AYu-Ka-wuw" id="fNn-hA-qsR"/>
                         <outlet property="scrollView" destination="f2o-FY-hCA" id="CUd-JW-fTA"/>
+                        <segue destination="wO5-uD-HT8" kind="presentation" identifier="ShowDetail" id="7Ex-QG-LJb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9MF-Hp-5wH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1526.9865067466269" y="116"/>
+            <point key="canvasLocation" x="132" y="593"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="7Ex-QG-LJb"/>
+    </inferredMetricsTieBreakers>
     <color key="tintColor" name="AccentColor"/>
     <resources>
         <image name="PriceButton" width="11" height="10"/>

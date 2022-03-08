@@ -1,4 +1,3 @@
-//
 
 import UIKit
 
@@ -41,10 +40,17 @@ class LandscapeViewController: UIViewController {
       height: pageControl.frame.size.height)
     if firstTime {
       firstTime = false
-      if searchManager.searchResults.isEmpty {
+      switch searchManager.state {
+      case .noSearchOrError:
         scrollView.contentSize = CGSize(width: scrollView.bounds.size.width, height: scrollView.bounds.size.height)
-      } else {
-        tileButtons(searchManager.searchResults)
+      case .loading:
+        scrollView.contentSize = CGSize(width: scrollView.bounds.size.width, height: scrollView.bounds.size.height)
+        showSpinner()
+      case .results(let list):
+        tileButtons(list)
+      case .noResults:
+        scrollView.contentSize = CGSize(width: scrollView.bounds.size.width, height: scrollView.bounds.size.height)
+        showNothingFoundLabel()
       }
     }
   }
@@ -55,6 +61,19 @@ class LandscapeViewController: UIViewController {
       animations: {
         self.scrollView.contentOffset = CGPoint(x: self.scrollView.bounds.size.width * CGFloat(sender.currentPage), y: 0)
       }, completion: nil)
+  }
+  
+  // MARK: - Helper Methods
+  func searchResultsReceived() {
+    hideSpinner()
+    switch searchManager.state {
+    case .noSearchOrError, .loading:
+      break
+    case .noResults:
+      showNothingFoundLabel()
+    case .results(let list):
+      tileButtons(list)
+    }
   }
   
   // MARK: - Private Methods
@@ -85,7 +104,7 @@ class LandscapeViewController: UIViewController {
     var row = 0
     var column = 0
     var x = marginX
-    for result in searchResults {
+    for (index, result) in searchResults.enumerated() {
       let button = UIButton(type: .custom)
       downloadImage(for: result, andPlaceOn: button)
       button.setBackgroundImage(UIImage(named: "LandscapeButton"), for: .normal)
@@ -93,6 +112,8 @@ class LandscapeViewController: UIViewController {
         x: x + paddingHorz,
         y: marginY + CGFloat(row) * itemHeight + paddingVert,
         width: buttonWidth, height: buttonHeight)
+      button.tag = 2000 + index
+      button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
       scrollView.addSubview(button)
       
       row += 1
@@ -105,7 +126,10 @@ class LandscapeViewController: UIViewController {
     }
     pageControl.numberOfPages = numPages
     pageControl.currentPage = 0
-    
+  }
+  
+  @objc private func buttonPressed(_ sender: UIButton) {
+    performSegue(withIdentifier: "ShowDetail", sender: sender)
   }
   
   private func downloadImage(for searchResult: SearchResult, andPlaceOn button: UIButton) {
@@ -129,9 +153,59 @@ class LandscapeViewController: UIViewController {
       }
     }
   }
-
   
+  private func showSpinner() {
+    let spinner = UIActivityIndicatorView(style: .large)
+    spinner.center = CGPoint(x: scrollView.bounds.midX - spinner.frame.width + 0.5, y: scrollView.bounds.midY + 0.5) //
+    spinner.tag = 1000
+    let label = UILabel(frame: CGRect(x: scrollView.bounds.midX + 0.5,
+                                        y: scrollView.bounds.midY - 10,
+                                        width: 100, height: 20))
+    label.text = "Loading..."
+    label.textColor = UIColor(named: "ArtistName")
+    label.backgroundColor = UIColor.clear
+    label.font = .systemFont(ofSize: 17)
+    label.tag = 1001
+    view.addSubview(spinner)
+    view.addSubview(label)
+    spinner.startAnimating()
+  }
+  
+  private func hideSpinner() {
+    view.viewWithTag(1000)?.removeFromSuperview()
+    view.viewWithTag(1001)?.removeFromSuperview()
+  }
+  
+  private func showNothingFoundLabel() {
+    let label = UILabel(frame: CGRect.zero)
+    label.text = "Nothing Found"
+    label.textColor = UIColor.label
+    label.backgroundColor = UIColor.clear
+    
+    label.sizeToFit()
+    
+    var rect = label.frame
+    rect.size.width = ceil(rect.size.width / 2) * 2             // make even
+    rect.size.height = ceil(rect.size.height / 2) * 2           // make even
+    label.frame = rect
+    
+    label.center = CGPoint(x: scrollView.bounds.midX, y: scrollView.bounds.midY)
+    view.addSubview(label)
+  }
+  
+  // MARK: - Navigation
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == "ShowDetail" {
+      if case .results(let list) = searchManager.state {
+        let detailViewController = segue.destination as! DetailViewController
+        let searchResult = list[(sender as! UIButton).tag - 2000]
+        detailViewController.searchResult = searchResult
+      }
+    }
+  }
 }
+
+
 
 extension LandscapeViewController: UIScrollViewDelegate {
   func scrollViewDidScroll(_ scrollView: UIScrollView) {

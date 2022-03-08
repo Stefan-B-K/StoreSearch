@@ -68,13 +68,16 @@ class SearchViewController: UIViewController {
   func performSearch() {
     if !searchBar.text!.isEmpty {
       hideKeyboard()
-      searchManager.performSearch(for: searchBar.text!, category: segmentedControl.selectedSegmentIndex) { success in
-        if !success {
-          self.showNetworkError()
+      if let category = SearchManager.Category(rawValue: segmentedControl.selectedSegmentIndex) {
+        searchManager.performSearch(for: searchBar.text!, category: category) { success, failMessage in
+          if !success {
+            self.showNetworkError(message: failMessage)
+          }
+          self.tableView.reloadData()
+          self.landscapeVC?.searchResultsReceived()
         }
-        self.tableView.reloadData()
+        tableView.reloadData()
       }
-      tableView.reloadData()
     }
   }
   
@@ -94,8 +97,8 @@ class SearchViewController: UIViewController {
     }
   }
   
-  private func showNetworkError() {
-    let alert = UIAlertController(title: "Whoops...", message: "Error accessing iTunes Store", preferredStyle: .alert)
+  private func showNetworkError(message: String?) {
+    let alert = UIAlertController(title: "Whoops...", message: message ?? "Error accessing iTunes Store", preferredStyle: .alert)
     let action = UIAlertAction(title: "OK", style: .default, handler: nil)
     alert.addAction(action)
     present(alert, animated: true, completion: nil)
@@ -135,6 +138,9 @@ class SearchViewController: UIViewController {
         coordinator.animate(
           alongsideTransition: { _ in
             controller.view.alpha = 0                                 //  animation END state
+            if self.presentedViewController != nil {
+              self.dismiss(animated: true, completion: nil)
+            }
           },
           completion: { _ in
             controller.view.removeFromSuperview()
@@ -162,8 +168,12 @@ extension SearchViewController: UISearchBarDelegate {
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     searchBarClearButtonColor()
-    if searchText == "" && searchManager.searchResults.isEmpty {
-      tableView.reloadData()
+    if searchText == "" {
+      guard case .results = searchManager.state else {
+        searchManager.cancelSearch()
+        tableView.reloadData()
+        return
+      }
     }
   }
   
@@ -177,24 +187,30 @@ extension SearchViewController: UISearchBarDelegate {
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return searchManager.isLoading ? 1 : (searchManager.searchResults.isEmpty ? (searchManager.hasSearched ? 1 : 0) : searchManager.searchResults.count)
+    switch searchManager.state {
+    case .noSearchOrError: return 0
+    case .loading, .noResults: return 1
+    case .results(let list): return list.count
+    }
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
-    if searchManager.isLoading {
+    switch searchManager.state {
+    case .noSearchOrError:
+      fatalError("numberOfRowsInSection returns 0 and cellForRowAt should never be called")
+    case .loading:
       tableView.separatorStyle = .none
       let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.loadingCell, for: indexPath)
       let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
       spinner.startAnimating()
       return cell
-    } else if !searchManager.searchResults.isEmpty {
+    case .results(let list):
       let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.searchResultCell, for: indexPath) as! SearchResultCell
-      cell.nameLabel.text = searchManager.searchResults[indexPath.row].name
-      let searchResult = searchManager.searchResults[indexPath.row]
+      let searchResult = list[indexPath.row]
       cell.configure(for: searchResult)
       return cell
-    } else {
+    case .noResults:
       tableView.separatorStyle = .none
       if searchBar.text == "" {
         return UITableViewCell()
@@ -206,7 +222,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-    return searchManager.searchResults.isEmpty || searchManager.isLoading ? nil : indexPath
+    switch searchManager.state {
+    case .noSearchOrError, .loading, .noResults:
+      return nil
+    case .results:
+      return indexPath
+    }
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -216,10 +237,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if segue.identifier == Identifiers.detailSegue {
-      let indexPath = sender as! IndexPath
-      let searchResult = searchManager.searchResults[indexPath.row]
-      let popUp = segue.destination as! DetailViewController
-      popUp.searchResult = searchResult
+      if case .results(let list) = searchManager.state {
+        let indexPath = sender as! IndexPath
+        let searchResult = list[indexPath.row]
+        let popUp = segue.destination as! DetailViewController
+        popUp.searchResult = searchResult
+      }
     }
   }
   
