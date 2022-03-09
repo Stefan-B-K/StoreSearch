@@ -24,6 +24,7 @@
 		98BB8FC927D7BEA0005D2F1A /* NoResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98BB8FCB27D7BEA0005D2F1A /* NoResultCell.xib */; };
 		98BB8FD027D7C63F005D2F1A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 98BB8FD227D7C63F005D2F1A /* Localizable.strings */; };
 		98BB8FD627D7D8C0005D2F1A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 98BB8FD827D7D8C0005D2F1A /* InfoPlist.strings */; };
+		98BB8FDD27D90A89005D2F1A /* PopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BB8FDC27D90A89005D2F1A /* PopoverViewController.swift */; };
 		98D1858E27D79F4F00A27569 /* LoadingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98D1859027D79F4F00A27569 /* LoadingCell.xib */; };
 		98D1859527D7A37A00A27569 /* SearchResultCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 98D1859727D7A37A00A27569 /* SearchResultCell.xib */; };
 		98F078AC27CD4847006B729A /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F078AB27CD4847006B729A /* UIImageView.swift */; };
@@ -54,6 +55,7 @@
 		98BB8FD327D7CC34005D2F1A /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		98BB8FD727D7D8C0005D2F1A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "../УПРАЖНЕНИЯ/UIKit/StoreSearch/StoreSearch/en.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		98BB8FD927D7D921005D2F1A /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "../УПРАЖНЕНИЯ/UIKit/StoreSearch/StoreSearch/nl.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		98BB8FDC27D90A89005D2F1A /* PopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverViewController.swift; sourceTree = "<group>"; };
 		98D1858F27D79F4F00A27569 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LoadingCell.xib; sourceTree = "<group>"; };
 		98D1859227D79F8900A27569 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LoadingCell.strings; sourceTree = "<group>"; };
 		98D1859427D7A15B00A27569 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				988EF59327C8025A000E2FC3 /* SearchResultCell.swift */,
 				98F078B027CE3AF2006B729A /* DetailViewController.swift */,
 				98641E8D27CF94C300CF6F0E /* LandscapeViewController.swift */,
+				98BB8FDC27D90A89005D2F1A /* PopoverViewController.swift */,
 				98A0565827CFDD78000FE3EB /* Animation */,
 				98F078AD27CD484E006B729A /* Extensions */,
 			);
@@ -236,6 +239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98BB8FDD27D90A89005D2F1A /* PopoverViewController.swift in Sources */,
 				98F078B127CE3AF2006B729A /* DetailViewController.swift in Sources */,
 				98B014AE27C7983F00EBD9AA /* SearchViewController.swift in Sources */,
 				980FB7D827CE896C00DF3BFD /* GradientView.swift in Sources */,

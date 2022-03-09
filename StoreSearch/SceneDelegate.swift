@@ -10,6 +10,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
     searchVC.splitViewDetail = detailVC
     splitVC.delegate = self
+    splitVC.preferredDisplayMode = .oneBesideSecondary
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}

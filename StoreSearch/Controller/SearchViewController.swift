@@ -60,8 +60,10 @@ class SearchViewController: UIViewController {
     
     switch newCollection.verticalSizeClass {
     case .compact:
-      hideKeyboard()
-      showLandscape(with: coordinator)
+      if newCollection.horizontalSizeClass == .compact {
+        hideKeyboard()
+        showLandscape(with: coordinator)
+      }
     case .regular, .unspecified:
       hideLandscape(with: coordinator)
     @unknown default:
