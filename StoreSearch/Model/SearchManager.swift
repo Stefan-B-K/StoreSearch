@@ -35,7 +35,12 @@ class SearchManager {
   // MARK: - HTTP data from API
   private func iTunesURL(searchText: String, category: Category) -> URL {
     let encodedString = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+//    let locale = Locale.autoupdatingCurrent
+//    let language = locale.identifier
+//    let countryCode = locale.regionCode ?? "en_US"
     let urlString = "https://itunes.apple.com/search?term=\(encodedString!)&limit=200&entity=\(category.kind)"
+//                    + "&lang=\(language)&country=\(countryCode)"    // BG not allowes 400
+    print("URL: \(URL(string: urlString)!)")
     return URL(string: urlString)!
   }
   

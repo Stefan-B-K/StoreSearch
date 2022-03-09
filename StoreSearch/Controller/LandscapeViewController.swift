@@ -84,8 +84,8 @@ class LandscapeViewController: UIViewController {
     let rowsPerPage: Int
     let marginX: CGFloat
     let marginY: CGFloat
-    let viewWidth = scrollView.bounds.size.width
-    let viewHeight = scrollView.bounds.size.height
+    let viewWidth = UIScreen.main.bounds.size.width
+    let viewHeight = UIScreen.main.bounds.size.height
     
     columnsPerPage = Int(viewWidth / itemWidth)
     rowsPerPage = Int(viewHeight / itemHeight)
@@ -197,14 +197,14 @@ class LandscapeViewController: UIViewController {
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if segue.identifier == "ShowDetail" {
       if case .results(let list) = searchManager.state {
-        let detailViewController = segue.destination as! DetailViewController
+        let popUp = segue.destination as! DetailViewController
         let searchResult = list[(sender as! UIButton).tag - 2000]
-        detailViewController.searchResult = searchResult
+        popUp.searchResult = searchResult
+        popUp.isPopUp = true
       }
     }
   }
 }
-
 
 
 extension LandscapeViewController: UIScrollViewDelegate {

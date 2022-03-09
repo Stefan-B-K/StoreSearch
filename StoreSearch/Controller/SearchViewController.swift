@@ -16,11 +16,23 @@ class SearchViewController: UIViewController {
   
   private let searchManager = SearchManager.shared
   private var landscapeVC: LandscapeViewController?
+  weak var splitViewDetail: DetailViewController?
+  
+  override func viewWillAppear(_ animated: Bool) {
+    if UIDevice.current.userInterfaceIdiom == .phone {
+      navigationController?.navigationBar.isHidden = true
+    }
+  }
+
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    searchBar.becomeFirstResponder()
+    title = NSLocalizedString("Search", comment: "split view primary button")
+    
+    if UIDevice.current.userInterfaceIdiom != .pad {
+      searchBar.becomeFirstResponder()
+    }
     tableView.contentInset = UIEdgeInsets(top: 110, left: 0, bottom: 0, right: 0)
     searchBarTextFieldColors()
     
@@ -40,6 +52,7 @@ class SearchViewController: UIViewController {
       showLandscape()
       return
     }
+
   }
   
   override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -155,7 +168,16 @@ class SearchViewController: UIViewController {
     }
   }
   
-  
+  // MARK: - Private Methods
+  private func hidePrimaryPane() {
+    UIView.animate(withDuration: 0.25, animations: {
+      self.splitViewController!.preferredDisplayMode = .secondaryOnly
+    }, completion: { _ in
+      self.splitViewController!.preferredDisplayMode = .automatic
+    }
+    )
+  }
+
 }
 
 
@@ -231,8 +253,18 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    tableView.deselectRow(at: indexPath, animated: true)
-    performSegue(withIdentifier: Identifiers.detailSegue, sender: indexPath)
+    searchBar.resignFirstResponder()
+    if view.window?.rootViewController?.traitCollection.horizontalSizeClass == .compact {
+      tableView.deselectRow(at: indexPath, animated: true)
+      performSegue(withIdentifier: Identifiers.detailSegue, sender: indexPath)
+    } else {
+      if case .results(let list) = searchManager.state {
+        splitViewDetail?.searchResult = list[indexPath.row]
+        if splitViewController?.displayMode != .oneBesideSecondary {
+          hidePrimaryPane()
+        }
+      }
+    }
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -242,6 +274,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         let searchResult = list[indexPath.row]
         let popUp = segue.destination as! DetailViewController
         popUp.searchResult = searchResult
+        popUp.isPopUp = true
       }
     }
   }

@@ -11,13 +11,20 @@ class DetailViewController: UIViewController {
   @IBOutlet weak var genreLabel: UILabel!
   @IBOutlet weak var priceButton: UIButton!
   
-  var searchResult: SearchResult!
+  var searchResult: SearchResult!  {
+    didSet {
+      if isViewLoaded {
+        updateUI()
+      }
+    }
+  }
   private var downloadImageTask: URLSessionDownloadTask?
   
   private enum AnimationStyle {
     case slide, fade
   }
   private var dismissStyle = AnimationStyle.fade
+  var isPopUp = false
   
   
   required init?(coder aDecoder: NSCoder) {
@@ -34,18 +41,27 @@ class DetailViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    popupView.layer.cornerRadius = 10
+    if isPopUp {
+      popupView.layer.cornerRadius = 10
+      
+      let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(close))
+      gestureRecognizer.cancelsTouchesInView = false
+      gestureRecognizer.delegate = self
+      view.addGestureRecognizer(gestureRecognizer)
+      
+      view.backgroundColor = UIColor.clear
+      let dimmingView = GradientView(frame: view.bounds)
+      view.insertSubview(dimmingView, at: 0)
+    } else {
+      view.backgroundColor = UIColor(patternImage: UIImage(named: "LandscapeBackground")!)
+      UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut], animations: {
+        self.popupView.isHidden = true
+      }, completion: nil)
+    }
+    if searchResult != nil {
+      updateUI()
+    }
     
-    let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(close))
-    gestureRecognizer.cancelsTouchesInView = false
-    gestureRecognizer.delegate = self
-    view.addGestureRecognizer(gestureRecognizer)
-    
-    updateUI()
-    
-    view.backgroundColor = UIColor.clear
-    let dimmingView = GradientView(frame: view.bounds)
-    view.insertSubview(dimmingView, at: 0)
   }
   
   @IBAction func close() {
@@ -72,6 +88,7 @@ class DetailViewController: UIViewController {
     if let largeURL = URL(string: searchResult.imageLarge) {
       downloadImageTask = artworkImageView.loadImage(url: largeURL)
     }
+    popupView.isHidden = false
   }
   
 }
